@@ -20,6 +20,7 @@ public class MemoryMemberRepositoryTest {
     // test는 서로 의존관계 없이 테스트가 이루어져야함
     @AfterEach
     public void afterEach(){
+
         repository.clearStore(); //repository 저장소를 다 지움
     }
 
@@ -50,7 +51,8 @@ public class MemoryMemberRepositoryTest {
         /* 검증방법 3   assertThat 으로 확인    */
 
         //member가 result랑 똑같애?
-         assertThat(member).isEqualTo(result); //아무 error가 나지 않고 true라면 아무것도 뜨지않음
+
+        assertThat(member).isEqualTo(result); //아무 error가 나지 않고 true라면 아무것도 뜨지않음
 
          //assertThat(member).isEqualTo(null);
          //error인 경우
@@ -76,6 +78,8 @@ public class MemoryMemberRepositoryTest {
         repository.save(member2);
 
         Member result = repository.findByName("spring1").get();
+        System.out.println(result);
+        System.out.println(member1);
 
         assertThat(result).isEqualTo(member1);
     }
