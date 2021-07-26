@@ -4,6 +4,11 @@ import hello.hellospring.domain.Member;
 import hello.hellospring.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 // 스프링이 뜰때 스프링 컨테이너라는 통이 생김. 거기에 @Controller 이 있으면 MemberController 객체를 생성해서 spring에 넣어 둠. 이후 spring이 관리
 // = 스프링 컨테이너에서 스프링 bean이 관리된다는 이야기
@@ -16,25 +21,56 @@ public class MemberController {
     // 생성자에 @Autowired 가 있으면 spring container에 memberService를 가져다가 연결시킴
     // 이후 service에 @Service를 추가해줘야함(이를 추가해야 spring이 container에 등록해줄 수 있음) @Repository도 마찬가지
 
-
     @Autowired //의존성주입 1. 생성자주입 (가장 많이 사용) - 요즘 권장하는 방식
     public MemberController(MemberService memberService) { //Dependency Injection
         this.memberService = memberService;
     }
 
+    @GetMapping("members/new")
+    public String createForm() {
+        return "members/createMemberForm";
+    }
 
-    //@Autowired MemberService memberService; //의존성주입 2. 필드주입
+    //회원가입
+    @PostMapping("/members/new")
+    public String create(MemberForm form) { //MemberForm에 setName을 통해서 값을 넣음
+        Member member = new Member();
+        member.setName(form.getName());
+
+        memberService.join(member);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/members")
+    public String list(Model model){
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members",members);
+        //View에 데이터 전달하기위해 model 객체 사용.
+
+        return "members/memberList";
+    }
 
 
-    // 의존성주입 3. setter 주입
-    // public 으로 열어둬야하는데 거의 바꿀일이 없음
-    // setter를 사용하다보니 누군가가 접근할 수 있도록 열려있음
 
-    //    public MemberService setMemberService(MemberService memberService) {
-    //        this.memberService = memberService;
-    //    }
+
 }
 
+
+
+
+
+//의존성주입 1. 생성자주입 (가장 많이 사용) - 요즘 권장하는 방식
+
+//@Autowired MemberService memberService; //의존성주입 2. 필드주입
+
+// 의존성주입 3. setter 주입
+// public 으로 열어둬야하는데 거의 바꿀일이 없음
+// setter를 사용하다보니 누군가가 접근할 수 있도록 열려있음
+
+//    public MemberService setMemberService(MemberService memberService) {
+//        this.memberService = memberService;
+//    }
 
 
 
